@@ -2,9 +2,6 @@ import { baseApi } from "./baseApi";
 
 const stripeApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // =========================
-    // ORDER CREATE
-    // =========================
     createOrder: builder.mutation({
       query: (data) => ({
         url: "/order/create-order",
@@ -30,6 +27,15 @@ const stripeApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["SingleOrder"],
+    }),
+
+    cancelOrder: builder.mutation({
+      query: ({ id, reason }) => ({
+        url: `/order/cancel/${id}`,
+        method: "PATCH",
+        body: reason ? { reason } : {},
+      }),
+      invalidatesTags: ["Orders", "SingleOrder"],
     }),
 
    
@@ -85,6 +91,7 @@ export const {
   useCreateOrderMutation,
   useGetMyOrderQuery,
   useGetSingleOrderQuery,
+  useCancelOrderMutation,
   useUpdateOrderStatusMutation,
   useUpdateStatusMutation,
   useCreateTipToBartenderMutation,

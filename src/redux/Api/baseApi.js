@@ -2,7 +2,9 @@
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseUrl = "http://10.10.20.9:3500/api/v1";
+// set NEXT_PUBLIC_API_URL in .env.local, e.g. https://api.flonxapp.com
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3500").replace(/\/+$/, "");
+const baseUrl = `${API_URL}/api/v1`;
 
 // ✅ get token
 const getToken = () => {

@@ -38,9 +38,13 @@ const [login, { isLoading }] = useLoginAdminMutation();
 
     if (savedData) {
       const parsed = JSON.parse(savedData);
+      // older versions saved the password too; drop it
+      if (parsed.password) {
+        localStorage.setItem("loginData", JSON.stringify({ email: parsed.email }));
+      }
       setFormValues({
         email: parsed.email || "",
-        password: parsed.password || "",
+        password: "",
         remember: true,
       });
     }
@@ -62,7 +66,6 @@ const [login, { isLoading }] = useLoginAdminMutation();
     try {
       const res = await login({
         email: formValues.email,
-        password: formValues.password,
       }).unwrap();
 
       const role = res?.data?.role;
@@ -82,7 +85,6 @@ const [login, { isLoading }] = useLoginAdminMutation();
             "loginData",
             JSON.stringify({
               email: formValues.email,
-              password: formValues.password,
             }),
           );
         } else {
