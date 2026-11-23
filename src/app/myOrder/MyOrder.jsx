@@ -16,8 +16,10 @@ const MyOrder = () => {
     data: myOrder,
     isLoading,
     isFetching,
-  } = useGetMyOrderQuery({ status });
-  console.log(myOrder);
+  } = useGetMyOrderQuery(
+    { status },
+    { pollingInterval: 15000, skipPollingIfUnfocused: true },
+  );
   if (isLoading) return <PageLoader />;
 
   return (

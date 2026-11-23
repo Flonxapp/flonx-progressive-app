@@ -9,6 +9,7 @@ import {
   useGetCustomerSavePaymentQuery,
 } from "@/redux/Api/stipApi";
 import { toast } from "react-toastify";
+import { paymentResultPath } from "@/lib/stripe";
 
 const Bartender = () => {
   const router = useRouter();
@@ -39,7 +40,6 @@ const Bartender = () => {
   ========================= */
 
   const createOrder = async (paymentMethodId = "") => {
-  console.log(paymentMethodId);
 
   let finalAmount = selected;
 
@@ -66,19 +66,16 @@ const Bartender = () => {
     const clientSecret = res?.data?.clientSecret;
     const orderId = res?.data?.orderId;
 
-    toast.success(res?.message || "Tip added successfully!");
+    if (!clientSecret) {
+      throw new Error("No client secret received");
+    }
 
+    // the tip is only confirmed once the payment succeeds
     if (paymentMethodId) {
-      router.push(
-        `/checkout/payment_successfull?payment_intent=${orderId}`
-      );
+      router.push(paymentResultPath(clientSecret, "tip"));
     } else {
-      if (!clientSecret) {
-        throw new Error("No client secret received");
-      }
-
       router.push(
-        `/payment?clientSecret=${clientSecret}&orderId=${orderId}`
+        `/payment?clientSecret=${encodeURIComponent(clientSecret)}&orderId=${orderId}&for=tip`
       );
     }
   } catch (err) {

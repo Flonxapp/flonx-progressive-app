@@ -1,36 +1,46 @@
-// src/Redux/baseApi.js
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  API_BASE,
+  ensureSession,
+  getAccessToken,
+  renewSession,
+} from "@/lib/session";
 
-// set NEXT_PUBLIC_API_URL in .env.local, e.g. https://api.flonxapp.com
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3500").replace(/\/+$/, "");
-const baseUrl = `${API_URL}/api/v1`;
-
-// ✅ get token
-const getToken = () => {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("accessToken");
-};
-
-// ✅ base query
-const baseQuery = fetchBaseQuery({
-  baseUrl,
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: API_BASE,
   prepareHeaders: (headers) => {
-    const token = getToken();
-    if (token) {
-      headers.set("Authorization", token); 
-      // ⚠️ if backend needs:
-      // headers.set("Authorization", `Bearer ${token}`);
-    }
+    const token = getAccessToken();
+    if (token) headers.set("Authorization", token);
     return headers;
   },
 });
 
-// ✅ NO 401 HANDLING HERE
+// - before the first request, make sure there is a session (a visitor who
+//   opens a venue link directly gets a guest session)
+// - on 401 (expired token) renew the session once and retry the request
+const baseQueryWithSession = async (args, api, extraOptions) => {
+  if (typeof window !== "undefined" && !getAccessToken()) {
+    await ensureSession();
+  }
+  let result = await rawBaseQuery(args, api, extraOptions);
+  if (result.error?.status === 401 && (await renewSession())) {
+    result = await rawBaseQuery(args, api, extraOptions);
+  }
+  return result;
+};
+
 export const baseApi = createApi({
   reducerPath: "api",
-  baseQuery: baseQuery, // 🔥 directly use baseQuery
-  tagTypes: ["profile", "event", "videos"],
+  baseQuery: baseQueryWithSession,
+  tagTypes: [
+    "Orders",
+    "SingleOrder",
+    "Payment",
+    "venue",
+    "updateProfile",
+    "host",
+    "videos",
+  ],
   endpoints: () => ({}),
 });
 

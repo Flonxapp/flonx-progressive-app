@@ -13,14 +13,12 @@ import { toast } from "react-toastify";
 import { useGetSingleVenueQuery } from "@/redux/Api/venueApi";
 import LocationIco from "@/components/icon/LocationIco";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
+import { saveSession } from "@/lib/session";
 
 const Login = () => {
-  const {id} = useParams();
-  console.log(id)
+  const { id } = useParams();
   const { data: getSingleVenue } = useGetSingleVenueQuery({ id });
-  
-    const venue = getSingleVenue?.data;
-    console.log(venue)
+  const venue = getSingleVenue?.data;
 const [login, { isLoading }] = useLoginAdminMutation();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -66,17 +64,19 @@ const [login, { isLoading }] = useLoginAdminMutation();
     try {
       const res = await login({
         email: formValues.email,
+        password: formValues.password,
       }).unwrap();
 
       const role = res?.data?.role;
 
-      // ✅ Role check
+      // only bartenders sign in here
       if (role === "bartender") {
-      localStorage.setItem("accessToken", res.data.accessToken);
-
-        console.log("Login Success:", res);
-        
-        toast.success(res?.message);
+        saveSession({
+          accessToken: res.data.accessToken,
+          refreshToken: res.data.refreshToken,
+          role: "bartender",
+        });
+        toast.success(res?.message || "Login successful");
         router.push(`/shiftDetails/${id}`);
 
         // remember me
@@ -95,7 +95,6 @@ const [login, { isLoading }] = useLoginAdminMutation();
       }
     } catch (err) {
       toast.error(err?.data?.message || "Login failed");
-      console.error("Login Error:", err);
     }
   };
   const handleForgetPassword = () => {

@@ -10,11 +10,12 @@ import { PageLoader } from "@/components/Loading";
 
 const ReadyForPickup = () => {
   const { id } = useParams();
-  console.log(id)
   const router = useRouter();
 
-  const { data: singleOrder } = useGetSingleOrderQuery({ id });
-  console.log(singleOrder) 
+  const { data: singleOrder } = useGetSingleOrderQuery(
+    { id },
+    { pollingInterval: 10000, skipPollingIfUnfocused: true },
+  );
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
 const [isLoading, setIsLoading] = useState(false);
   const [position, setPosition] = useState(0);

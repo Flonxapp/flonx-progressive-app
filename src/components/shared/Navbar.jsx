@@ -20,7 +20,6 @@ const unreadCount = notificationData?.data?.meta?.unreadCount || 0;
   try {
     await allSeeNotification().unwrap();
   } catch (error) {
-    console.log(error);
   }
 };
 //df
@@ -35,7 +34,6 @@ const handleDeleteNotification = async (id) => {
     const res = await deleteNotification(id).unwrap();
     toast.success(res?.message || "Notification deleted");
   } catch (error) {
-    console.log(error);
     toast.error(error?.data?.message || "Failed to delete notification");
   }
 };

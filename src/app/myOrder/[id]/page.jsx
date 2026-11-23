@@ -21,7 +21,10 @@ const REFUND_TEXT = {
 
 const SingleOrder = () => {
   const { id } = useParams();
-  const { data: singleOrder, isLoading } = useGetSingleOrderQuery({ id });
+  const { data: singleOrder, isLoading } = useGetSingleOrderQuery(
+    { id },
+    { pollingInterval: 10000, skipPollingIfUnfocused: true },
+  );
   const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
 
   if (isLoading) return <PageLoader></PageLoader>;

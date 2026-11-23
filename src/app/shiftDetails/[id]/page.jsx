@@ -22,22 +22,19 @@ const Page = () => {
   const sliderRef = useRef(null);
   
   const {data: myProfile} = useGetProfileQuery()
-  console.log(myProfile)
   const [sliderState, setSliderState] = useState({});
   const [loadingId, setLoadingId] = useState(null);
   const [loadingType, setLoadingType] = useState("");
   const { data: currentShiftData, isLoading: isShiftLoading } = useGetCurrentShiftQuery();
-console.log(currentShiftData)
   const currentShift = currentShiftData?.data?.currentShift;
   const shiftId = currentShift?._id;
 
   const [activeTab, setActiveTab] = useState("QUEUED");
 
   const { data: myOrder, refetch, isLoading: isOrderLoading } = useGetMyOrderQuery(
-    { status: activeTab, shift: shiftId },
-    { skip: !shiftId },
+    { status: activeTab },
+    { skip: !shiftId, pollingInterval: 8000, skipPollingIfUnfocused: true },
   );
-console.log(myOrder)
   const [updateStatus] = useUpdateStatusMutation();
   const [markUnavail] = useMarkUnavailableMutation();
 
@@ -68,7 +65,7 @@ console.log(myOrder)
       await updateStatus({ id, data: { status } }).unwrap();
       await refetch();
     } catch (err) {
-      console.error(err);
+      toast.error(err?.data?.message || "Could not update the order");
     } finally {
       setLoadingId(null);
       setLoadingType("");

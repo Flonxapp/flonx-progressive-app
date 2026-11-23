@@ -11,10 +11,14 @@ const style = localFont({
 });
 
 export const metadata = {
-  title: "Flonx App",
-  description: "E-commerce",
+  title: "Flonx",
+  description:
+    "Order drinks from your favourite bars, skip the line and tip your bartender.",
   manifest: "/manifest.json",
-  themeColor: "#0F0B1A",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -25,8 +29,7 @@ export const metadata = {
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  themeColor: "#0F0B1A",
 };
 
 export default function RootLayout({ children }) {

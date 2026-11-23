@@ -10,6 +10,15 @@ import Mark from "@/components/icon/Mark";
 import HomeIco from "@/components/icon/HomeIco";
 import HowWork from "./HowWork";
 import Navigate from "@/components/shared/Navigate";
+
+// sign-up pages of the bartender and venue-owner dashboards
+const BARTENDER_DASHBOARD_URL = (
+  process.env.NEXT_PUBLIC_BARTENDER_DASHBOARD_URL ||
+  "https://bartender.flonxapp.com"
+).replace(/\/+$/, "");
+const VENUE_DASHBOARD_URL = (
+  process.env.NEXT_PUBLIC_VENUE_DASHBOARD_URL || "https://venue.flonxapp.com"
+).replace(/\/+$/, "");
 import Link from "next/link";
 const JoinNow = () => {
 
@@ -73,7 +82,7 @@ const JoinNow = () => {
             </h1>
           </ul>
 
-          <Link href="https://flonx-bartender-flow-client.vercel.app/joinAs">
+          <Link href={`${BARTENDER_DASHBOARD_URL}/joinAs`}>
           <button className="mt-8 w-full py-3 rounded-full bg-gradient-to-r from-[#822CE7] to-[#BB82FF] font-semibold shadow-lg hover:scale-[1.02] active:scale-95 transition">
             Join as Bartender
           </button></Link>
@@ -106,7 +115,7 @@ const JoinNow = () => {
             </h1>
           </ul>
 
-          <Link href={'https://flonx-venue-owner-dashboard-client.vercel.app/joinAs'}>
+          <Link href={`${VENUE_DASHBOARD_URL}/joinAs`}>
           <button className="mt-8 w-full py-3 rounded-full bg-gradient-to-r from-[#822CE7] to-[#BB82FF] font-semibold shadow-lg hover:scale-[1.02] active:scale-95 transition">
         Join as a venue
 

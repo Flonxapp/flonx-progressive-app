@@ -28,7 +28,6 @@ export default function Venue() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [allVenues, setAllVenues] = useState([]);
-  console.log(allVenues)
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("");
 
@@ -36,7 +35,6 @@ export default function Venue() {
 
   const { data: getSingleVenue, isLoading: isVenueLoading } =
     useGetSingleVenueQuery({ id });
-    console.log(getSingleVenue)
 
   const { data: getSinglecategory, isLoading: isCategoryLoading } =
     useGetCategoryQuery({ id });

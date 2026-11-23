@@ -12,10 +12,8 @@ const ForgetPass = () => {
 const router = useRouter();
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email:", email);
     const res = forgetPassword({ email }).unwrap();
     res.then((response) => {
-      console.log("Response:", response);
       if (response?.success) {
         toast.success(response?.message || "Verification code sent successfully!");
         localStorage.setItem("resetEmail", email);

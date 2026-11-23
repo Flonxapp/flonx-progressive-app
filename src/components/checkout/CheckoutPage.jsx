@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/navigation";
 import { PageLoader } from "../Loading";
 import NoData from "../NoData";
+import { paymentResultPath } from "@/lib/stripe";
 export default function CheckoutPage() {
   const { data: viewCart, isLoading } = useGetViewCartQuery();
   const [updateToCart] = useUpdateToCartMutation();
@@ -28,7 +29,6 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [removeCartItem] = useRemoveToCartMutation();
   const { data: savedCards } = useGetCustomerSavePaymentQuery();
-  console.log(savedCards);
   const [createOrder] = useCreateOrderMutation();
   const [orderLoading, setOrderLoading] = useState(false);
   // Track loading for each action type per item
@@ -100,32 +100,29 @@ export default function CheckoutPage() {
   };
 
   const crateOrder = async (paymentMethodId = "") => {
-    console.log(paymentMethodId);
     try {
       setOrderLoading(true);
 
       const res = await createOrder({
-        paymentMethodId,
+        ...(paymentMethodId ? { paymentMethodId } : {}),
       }).unwrap();
-
-      console.log(res);
 
       const clientSecret = res?.data?.clientSecret;
       const orderId = res?.data?.orderId;
-
-      console.log(clientSecret, orderId);
 
       if (!clientSecret) {
         throw new Error("No client secret received");
       }
 
       if (paymentMethodId) {
-        router.push(`/checkout/payment_successfull?payment_intent=${orderId}`);
+        // charged on the server; the result page confirms the real status
+        router.push(paymentResultPath(clientSecret, "order"));
       } else {
-        router.push(`/payment?clientSecret=${clientSecret}&orderId=${orderId}`);
+        router.push(
+          `/payment?clientSecret=${encodeURIComponent(clientSecret)}&orderId=${orderId}&for=order`,
+        );
       }
     } catch (err) {
-      console.log(err);
       toast.error(err?.data?.message || "Failed to place order!");
     } finally {
       setOrderLoading(false);

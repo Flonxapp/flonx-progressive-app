@@ -14,7 +14,6 @@ const ItemDetails = () => {
 
   const { data, isLoading } = useGetSingleProductQuery({ id });
   const product = data?.data;
-console.log(product)
   const [addToCart] = useAddToCartMutation();
   const [qty, setQty] = useState(1);
   const [loading, setLoading] = useState(false);

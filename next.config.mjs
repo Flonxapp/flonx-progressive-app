@@ -20,12 +20,15 @@ const nextConfig = {
       },
     ],
   },
-
-  turbopack: {}, // 👈 silence Next 16 warning
 };
 
+// next-pwa hooks into webpack, so dev and build run with --webpack
+// (see package.json). The service worker and workbox files are generated
+// into public/ at build time and are not committed.
 const pwa = withPWA({
   dest: "public",
+  register: true,
+  skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
 });
 
